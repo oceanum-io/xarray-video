@@ -1,0 +1,13 @@
+pip
+bumpversion
+wheel
+flake8
+tox
+Sphinx
+pydata-sphinx-theme
+autodoc_pydantic
+
+pytest
+pytest-env
+pytest-runner
+pytest-asyncio
