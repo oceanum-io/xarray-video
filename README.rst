@@ -9,6 +9,7 @@ xarray backend and zarr codec for working with video data
 Features
 --------
 
+* Xarray backend to read video into an xarray dataset
 * Xarray accessor for time and/or space stacked xarray-video
 * zarr codec for efficient compression of video in zarr chunks
 

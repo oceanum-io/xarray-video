@@ -11,7 +11,7 @@ with open("README.rst") as readme_file:
 with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
-import oceanum
+import xarray_video
 
 requirements = ["xarray", "numcodecs", "av"]
 
@@ -36,14 +36,14 @@ setup(
     license="MIT license",
     long_description=readme + "\n\n" + history,
     include_package_data=True,
-    keywords="oceanum",
+    keywords="oceanum,video,xarray",
     documentation="https://xarray-video.readthedocs.io",
-    name="oceanum",
+    name="xarray-video",
     packages=find_packages(),
     setup_requires=setup_requirements,
     test_suite="tests",
     tests_require=test_requirements,
     url="https://github.com/oceanum/xarray-video",
-    version=oceanum.__version__,
+    version=xarray_video.__version__,
     zip_safe=False,
 )
