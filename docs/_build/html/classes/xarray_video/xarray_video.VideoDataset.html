@@ -1,0 +1,388 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>xarray_video.VideoDataset &#8212; xarray-video 0.0.1 documentation</title>
+<script>
+  document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+  document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
+</script>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=92025949c220c2e29695" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=92025949c220c2e29695" rel="stylesheet">
+
+
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/autodoc_pydantic.css" />
+
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="xarray_video.MP4" href="xarray_video.MP4.html" />
+    <link rel="prev" title="xarray_video.VideoArray" href="xarray_video.VideoArray.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="docsearch:language" content="en">
+  </head>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="">
+    <div class="bd-header-announcement container-fluid" id="banner">
+      
+
+    </div>
+
+    
+    <nav class="bd-header navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="bd-header__inner container-xl">
+
+  <div id="navbar-start">
+    
+    
+  
+
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    <p class="title logo__title">xarray-video 0.0.1 documentation</p>
+  
+</a>
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="fas fa-bars"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../installation.html">
+  Installation
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../usage.html">
+  Usage
+ </a>
+</li>
+
+<li class="toctree-l1 current active nav-item">
+ <a class="reference internal nav-link" href="../../api.html">
+  API documentation
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../../about.html">
+  About
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <span id="theme-switch" class="btn btn-sm btn-outline-primary navbar-btn rounded-circle">
+    <a class="theme-switch" data-mode="light"><i class="fas fa-sun"></i></a>
+    <a class="theme-switch" data-mode="dark"><i class="far fa-moon"></i></a>
+    <a class="theme-switch" data-mode="auto"><i class="fas fa-adjust"></i></a>
+</span>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="bd-container container-xl">
+      <div class="bd-container__inner row">
+          
+
+<!-- Only show if we have sidebars configured, else just a small margin  -->
+<div class="bd-sidebar-primary col-12 col-md-3 bd-sidebar">
+  <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="xarray_video.open_video.html">
+   xarray_video.open_video
+  </a>
+ </li>
+</ul>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="xarray_video.VideoArray.html">
+   xarray_video.VideoArray
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   xarray_video.VideoDataset
+  </a>
+ </li>
+</ul>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="xarray_video.MP4.html">
+   xarray_video.MP4
+  </a>
+ </li>
+</ul>
+
+  </div>
+</nav>
+  </div>
+  <div class="sidebar-end-items">
+  </div>
+</div>
+
+
+          
+
+
+<div class="bd-sidebar-secondary d-none d-xl-block col-xl-2 bd-toc">
+  
+    
+    <div class="toc-item">
+      
+
+<nav id="bd-toc-nav">
+    
+</nav>
+    </div>
+    
+    <div class="toc-item">
+      
+    </div>
+    
+  
+</div>
+
+
+          
+          
+          <div class="bd-content col-12 col-md-9 col-xl-7">
+              
+              <article class="bd-article" role="main">
+                
+  <section id="xarray-video-videodataset">
+<h1>xarray_video.VideoDataset<a class="headerlink" href="#xarray-video-videodataset" title="Permalink to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="xarray_video.VideoDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_video.</span></span><span class="sig-name descname"><span class="pre">VideoDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_vars</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/xarray_video/videodataset.html#VideoDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xarray_video.VideoDataset" title="Permalink to this definition">#</a></dt>
+<dd><p>Video extension for <code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.Dataset</span></code>.
+Implements operations on a dataset which includes video data</p>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="xarray_video.VideoDataset.to_zarr">
+<span class="sig-name descname"><span class="pre">to_zarr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/xarray_video/videodataset.html#VideoDataset.to_zarr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xarray_video.VideoDataset.to_zarr" title="Permalink to this definition">#</a></dt>
+<dd><p>Write dataset contents to a zarr group.</p>
+<p>Zarr chunks are determined in the following way:</p>
+<ul class="simple">
+<li><p>From the <code class="docutils literal notranslate"><span class="pre">chunks</span></code> attribute in each variable’s <code class="docutils literal notranslate"><span class="pre">encoding</span></code>
+(can be set via <cite>Dataset.chunk</cite>).</p></li>
+<li><p>If the variable is a Dask array, from the dask chunks</p></li>
+<li><p>If neither Dask chunks nor encoding chunks are present, chunks will
+be determined automatically by Zarr</p></li>
+<li><p>If both Dask chunks and encoding chunks are present, encoding chunks
+will be used, provided that there is a many-to-one relationship between
+encoding chunks and dask chunks (i.e. Dask chunks are bigger than and
+evenly divide encoding chunks); otherwise raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>.
+This restriction ensures that no synchronization / locks are required
+when writing. To disable this restriction, use <code class="docutils literal notranslate"><span class="pre">safe_chunks=False</span></code>.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>store</strong> (<em>MutableMapping</em><em>, </em><em>str</em><em> or </em><em>path-like</em><em>, </em><em>optional</em>) – Store or path to directory in local or remote file system.</p></li>
+<li><p><strong>chunk_store</strong> (<em>MutableMapping</em><em>, </em><em>str</em><em> or </em><em>path-like</em><em>, </em><em>optional</em>) – Store or path to directory in local or remote file system only for Zarr
+array chunks. Requires zarr-python v2.4.0 or later.</p></li>
+<li><p><strong>mode</strong> (<em>{&quot;w&quot;</em><em>, </em><em>&quot;w-&quot;</em><em>, </em><em>&quot;a&quot;</em><em>, </em><em>&quot;r+&quot;</em><em>, </em><em>None}</em><em>, </em><em>optional</em>) – Persistence mode: “w” means create (overwrite if exists);
+“w-” means create (fail if exists);
+“a” means override existing variables (create if does not exist);
+“r+” means modify existing array <em>values</em> only (raise an error if
+any metadata or shapes would change).
+The default mode is “a” if <code class="docutils literal notranslate"><span class="pre">append_dim</span></code> is set. Otherwise, it is
+“r+” if <code class="docutils literal notranslate"><span class="pre">region</span></code> is set and <code class="docutils literal notranslate"><span class="pre">w-</span></code> otherwise.</p></li>
+<li><p><strong>synchronizer</strong> (<em>object</em><em>, </em><em>optional</em>) – Zarr array synchronizer.</p></li>
+<li><p><strong>group</strong> (<em>str</em><em>, </em><em>optional</em>) – Group path. (a.k.a. <cite>path</cite> in zarr terminology.)</p></li>
+<li><p><strong>encoding</strong> (<em>dict</em><em>, </em><em>optional</em>) – Nested dictionary with variable names as keys and dictionaries of
+variable specific encodings as values, e.g.,
+<code class="docutils literal notranslate"><span class="pre">{&quot;my_variable&quot;:</span> <span class="pre">{&quot;dtype&quot;:</span> <span class="pre">&quot;int16&quot;,</span> <span class="pre">&quot;scale_factor&quot;:</span> <span class="pre">0.1,},</span> <span class="pre">...}</span></code></p></li>
+<li><p><strong>compute</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True write array data immediately, otherwise return a
+<code class="docutils literal notranslate"><span class="pre">dask.delayed.Delayed</span></code> object that can be computed to write
+array data later. Metadata is always updated eagerly.</p></li>
+<li><p><strong>consolidated</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, apply zarr’s <cite>consolidate_metadata</cite> function to the store
+after writing metadata and read existing stores with consolidated
+metadata; if False, do not. The default (<cite>consolidated=None</cite>) means
+write consolidated metadata and attempt to read consolidated
+metadata for existing stores (falling back to non-consolidated).</p></li>
+<li><p><strong>append_dim</strong> (<em>hashable</em><em>, </em><em>optional</em>) – If set, the dimension along which the data will be appended. All
+other dimensions on overridden variables must remain the same size.</p></li>
+<li><p><strong>region</strong> (<em>dict</em><em>, </em><em>optional</em>) – <p>Optional mapping from dimension names to integer slices along
+dataset dimensions to indicate the region of existing zarr array(s)
+in which to write this dataset’s data. For example,
+<code class="docutils literal notranslate"><span class="pre">{'x':</span> <span class="pre">slice(0,</span> <span class="pre">1000),</span> <span class="pre">'y':</span> <span class="pre">slice(10000,</span> <span class="pre">11000)}</span></code> would indicate
+that values should be written to the region <code class="docutils literal notranslate"><span class="pre">0:1000</span></code> along <code class="docutils literal notranslate"><span class="pre">x</span></code>
+and <code class="docutils literal notranslate"><span class="pre">10000:11000</span></code> along <code class="docutils literal notranslate"><span class="pre">y</span></code>.</p>
+<p>Two restrictions apply to the use of <code class="docutils literal notranslate"><span class="pre">region</span></code>:</p>
+<ul>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">region</span></code> is set, _all_ variables in a dataset must have at
+least one dimension in common with the region. Other variables
+should be written in a separate call to <code class="docutils literal notranslate"><span class="pre">to_zarr()</span></code>.</p></li>
+<li><p>Dimensions cannot be included in both <code class="docutils literal notranslate"><span class="pre">region</span></code> and
+<code class="docutils literal notranslate"><span class="pre">append_dim</span></code> at the same time. To create empty arrays to fill
+in with <code class="docutils literal notranslate"><span class="pre">region</span></code>, use a separate call to <code class="docutils literal notranslate"><span class="pre">to_zarr()</span></code> with
+<code class="docutils literal notranslate"><span class="pre">compute=False</span></code>. See “Appending to existing Zarr stores” in
+the reference documentation for full details.</p></li>
+</ul>
+</p></li>
+<li><p><strong>safe_chunks</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, only allow writes to when there is a many-to-one relationship
+between Zarr chunks (specified in encoding) and Dask chunks.
+Set False to override this restriction; however, data may become corrupted
+if Zarr arrays are written in parallel. This option may be useful in combination
+with <code class="docutils literal notranslate"><span class="pre">compute=False</span></code> to initialize a Zarr from an existing
+Dataset with arbitrary chunk structure.</p></li>
+<li><p><strong>storage_options</strong> (<em>dict</em><em>, </em><em>optional</em>) – Any additional parameters for the storage backend (ignored for local
+paths).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>* <code class="docutils literal notranslate"><span class="pre">dask.delayed.Delayed</span></code> if compute is False</p></li>
+<li><p><em>* ZarrStore otherwise</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://zarr.readthedocs.io/">https://zarr.readthedocs.io/</a></p>
+<p class="rubric">Notes</p>
+<dl class="simple">
+<dt>Zarr chunking behavior:</dt><dd><p>If chunks are found in the encoding argument or attribute
+corresponding to any DataArray, those chunks are used.
+If a DataArray is a dask array, it is written with those chunks.
+If not other chunks are found, Zarr uses its own heuristics to
+choose automatic chunk sizes.</p>
+</dd>
+<dt>encoding:</dt><dd><p>The encoding attribute (if exists) of the DataArray(s) will be
+used. Override any existing encodings by providing the <code class="docutils literal notranslate"><span class="pre">encoding</span></code> kwarg.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><span class="xref std std-ref">io.zarr</span></dt><dd><p>The I/O user guide, with more details and examples.</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+              </article>
+              
+
+              
+              <footer class="bd-footer-article">
+                  <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+  <a class='left-prev' id="prev-link" href="xarray_video.VideoArray.html" title="previous page">
+      <i class="fas fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">xarray_video.VideoArray</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="xarray_video.MP4.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">xarray_video.MP4</p>
+  </div>
+  <i class="fas fa-angle-right"></i>
+  </a>
+</div>
+              </footer>
+              
+          </div>
+          
+      </div>
+    </div>
+
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=92025949c220c2e29695"></script>
+
+<footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    <p class="copyright">
+    &copy; Copyright 2022, Oceanum Developers.<br>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.1.1.<br>
+</p>
+  </div>
+  
+</div>
+</footer>
+  </body>
+</html>

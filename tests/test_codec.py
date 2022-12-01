@@ -4,35 +4,29 @@ import pytest
 import numpy
 import numcodecs
 import zarr
-import cv2
+import av
+from skimage.metrics import structural_similarity as ssim
 
 import xarray_video
 
-# from xarray_video.codecs import mp4v
 HERE = os.path.dirname(__file__)
-# sys.path.insert(0, os.path.join(HERE, ".."))
 
-compressor = numcodecs.registry.get_codec(dict(id="mp4v"))
+compressor = numcodecs.registry.get_codec(dict(id="mp4"))
 
 
 @pytest.fixture
 def video():
     """Connection fixture"""
-    video = cv2.VideoCapture(os.path.join(HERE, "data", "ocean_test.mp4"))
+    container = av.open(os.path.join(HERE, "data", "ocean_test.mp4"))
 
-    frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
-    width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
-    height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    codec = container.streams[0].codec_context
+    frames = container.streams[0].frames
+    width = codec.width
+    height = codec.height
 
     data = numpy.zeros((frames, height, width, 3), dtype="uint8")
-    i = 0
-    while True:
-        ok, image = video.read()
-        if not ok:
-            break
-        data[i] = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        i += 1
-    video.release()
+    for i, frame in enumerate(container.decode(video=0)):
+        data[i] = frame.to_ndarray(format="rgb24")
     return data
 
 
@@ -49,3 +43,7 @@ def test_zarr_write(video):
     z1[:] = video
     z2 = zarr.open("/tmp/test.zarr", mode="r")
     test = z2[:]
+    numpy.testing.assert_array_equal(z1[10], test[10])
+    # Compressed version not identical because using a different codec
+    similarity = ssim(video[10], test[10], channel_axis=2)
+    assert similarity > 0.94

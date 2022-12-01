@@ -4,10 +4,9 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = python -msphinx
-SPHINXPROJ    = oceanum
+SPHINXPROJ    = xarray_video
 SOURCEDIR     = .
 BUILDDIR      = _build
-DATAMESH_KEY  = <datamesh_key>
 
 # Put it first so that "make" without argument is like "make help".
 help:

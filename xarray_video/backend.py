@@ -5,7 +5,8 @@ import os
 import warnings
 
 import numpy as np
-import cv2
+import numcodecs
+import av
 
 from xarray import DataArray, Dataset
 from xarray.core import indexing
@@ -16,32 +17,34 @@ from xarray.backends.locks import SerializableLock
 
 from .exceptions import VideoReadError
 
-_extensions = [".avi"]
-
 VIDEO_LOCK = SerializableLock()
 
-_ERROR_MSG = (
-    "The kind of indexing operation you are trying to do is not "
-    "valid on video files. Try to load your data with ds.load()"
-    "first."
-)
+compressor = numcodecs.registry.get_codec(dict(id="mp4"))
+
+
+def _key_length(key, length):
+    if isinstance(key, slice):
+        return len(range(*key.indices(length)))
+    elif is_scalar(key):
+        return 1
+    else:
+        return length
 
 
 class VideoArrayWrapper(BackendArray):
     """A wrapper around video dataset objects"""
 
-    def __init__(self, manager, lock, vrt_params=None):
+    def __init__(self, manager, lock):
         self.manager = manager
         self.lock = lock
 
-        video = manager.acquire()
+        reader = manager.acquire()
 
-        frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
-        width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
-        height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        codec = reader.streams[0].codec_context
+        frames = reader.streams[0].frames
+        width = codec.width
+        height = codec.height
 
-        self.fps = int(video.get(cv2.CAP_PROP_FPS))
-        self.rgb_convert = video.get(cv2.CAP_PROP_CONVERT_RGB)
         self._shape = (frames, height, width, 3)
         self._dtype = np.dtype("uint8")
 
@@ -58,7 +61,6 @@ class VideoArrayWrapper(BackendArray):
 
         frame_key, y_key, x_key, band_key = key
 
-        squeeze_axis = []
         if isinstance(frame_key, slice):
             f0 = frame_key.start or 0
             f1 = frame_key.stop or self._shape[0]
@@ -67,40 +69,40 @@ class VideoArrayWrapper(BackendArray):
             f0 = frame_key
             f1 = frame_key + 1
             fstep = 1
-            squeeze_axis = [0]
         else:
             f0 = 0
             f1 = self._shape[0]
             fstep = 1
         nf = (f1 - f0) // fstep
+        ny = _key_length(y_key, self._shape[1])
+        nx = _key_length(x_key, self._shape[2])
+        nb = _key_length(band_key, self._shape[3])
 
-        i = f0
-        ind = 0
         data = np.zeros((nf, ny, nx, nb), dtype="uint8")
-        with self.lock:
-            while i < f1:
-                video = self.manager.acquire()
-                video.set(cv2.CAP_PROP_POS_FRAMES, i)
-                success, image = video.read()
-                if not success:
-                    break
-                RGBimage = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-                data[ind, :, :, :] = RGBimage[y_key, x_key, band_key]
-                i += fstep
-                ind += 1
-
-        if squeeze_axis:
-            data = np.squeeze(data, axis=squeeze_axis)
+        reader = self.manager.acquire()
+        reader.seek(f0)
+        ind0 = 0
+        for i, frame in enumerate(reader.decode(video=0)):
+            ind = frame.index
+            if frame.index < f0:
+                continue
+            elif frame.index >= f1:
+                break
+            elif frame.index % fstep == 0:
+                data[ind0] = frame.to_ndarray(format="rgb24")[y_key, x_key, band_key]
+                ind0 += 1
+        self.manager.close()
+        data = np.squeeze(data)
         return data
 
     def __getitem__(self, key):
         return indexing.explicit_indexing_adapter(
-            key, self.shape, indexing.IndexingSupport.OUTER, self._getitem
+            key, self.shape, indexing.IndexingSupport.BASIC, self._getitem
         )
 
 
 def _open_video(filename, mode):
-    return cv2.VideoCapture(filename)
+    return av.open(filename, mode=mode)
 
 
 def open_video(filename, start_time=None, **kwargs):
@@ -111,7 +113,7 @@ def open_video(filename, start_time=None, **kwargs):
 
     Args:
         filename (string): filename of videos to open
-        start_time (numpy.datetime64): Start time of video
+        start_time (:class:`numpy.datetime64`): Start time of video
 
     Returns:
         dataset (:class:`xarray.Dataset`): Dataset with video as a DataArray
@@ -120,26 +122,26 @@ def open_video(filename, start_time=None, **kwargs):
         VideoReadError: Missing or incompatible files
     """
 
-    lock = VIDEO_LOCK
     manager = CachingFileManager(
         _open_video,
         filename,
-        lock=lock,
+        lock=VIDEO_LOCK,
         mode="r",
         kwargs=kwargs,
     )
-    video = manager.acquire()
+    reader = manager.acquire()
 
-    fps = int(video.get(cv2.CAP_PROP_FPS))
-    frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
-    width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
-    height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    codec = reader.streams[0].codec_context
+    frames = reader.streams[0].frames
+    fps = int(reader.streams[0].rate)
+    width = codec.width
+    height = codec.height
 
-    coords = {"band": ["R", "G", "B"]}
+    coords = {"channel": ["R", "G", "B"]}
     coords["pixel_x"] = np.arange(width)
     coords["pixel_y"] = np.arange(height)
     if start_time:
-        times = np.datetime64(time_start) + np.arange(
+        times = np.datetime64(start_time) + np.arange(
             0, 1000 * frames / fps, 1000 / fps
         ).astype("<m8[ms]")
         coords["time"] = ("frame", times)
@@ -147,21 +149,25 @@ def open_video(filename, start_time=None, **kwargs):
         coords["frame"] = np.arange(frames)
 
     # Attributes
-    attrs = {"fps": fps}
-    data = indexing.LazilyIndexedArray(VideoArrayWrapper(manager, lock))
+    attrs = {"fps": fps, "_video": codec.name}
+    data = indexing.LazilyIndexedArray(VideoArrayWrapper(manager, VIDEO_LOCK))
 
     dataset = Dataset(
         data_vars={
             "video": DataArray(
                 data=data,
-                dims=("frame", "pixel_y", "pixel_x", "band"),
+                dims=("frame", "pixel_y", "pixel_x", "channel"),
                 coords=coords,
                 attrs=attrs,
             )
-        }
+        },
     )
+    dataset["video"].encoding = {
+        "chunks": [frames, height, width, 3],
+        "compressor": compressor,
+    }
 
     # Make the file closeable
-    # dataset.set_close(manager.release)
+    dataset.set_close(manager.close)
 
     return dataset

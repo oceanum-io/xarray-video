@@ -66,9 +66,7 @@ coverage: ## check code coverage quickly with the default Python
 	$(BROWSER) htmlcov/index.html
 
 docs: ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/oceanum.rst
-	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ oceanum
+	sphinx-apidoc -o docs/ xarray_video
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html

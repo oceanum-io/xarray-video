@@ -10,4 +10,4 @@ autodoc_pydantic
 pytest
 pytest-env
 pytest-runner
-pytest-asyncio
+scikit-image

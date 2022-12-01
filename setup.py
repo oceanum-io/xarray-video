@@ -13,10 +13,7 @@ with open("HISTORY.rst") as history_file:
 
 import oceanum
 
-requirements = [
-    "xarray",
-    "numcodecs",
-]
+requirements = ["xarray", "numcodecs", "av"]
 
 setup_requirements = [
     "pytest-runner",

@@ -1,8 +1,8 @@
 from numcodecs.registry import get_codec, register_codec
 
-from .codecs.mp4v import mp4v
+from .codecs.mp4 import MP4
 
-register_codec(mp4v)
+register_codec(MP4)
 
 
 from .videodataset import VideoDataset
