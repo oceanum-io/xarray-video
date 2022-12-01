@@ -179,10 +179,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="VideoArray.plot"><a class="viewcode-back" href="../../xarray_video.html#xarray_video.VideoArray.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Plot dataarray as an image using matplotlib.imshow</span>
+        <span class="sd">&quot;&quot;&quot;Plot DataArray as an image using matplotlib.imshow</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            VideoError: Exception if dataarray does not represent an image</span>
+<span class="sd">            VideoError: if DataArray does not represent an image</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">VideoError</span><span class="p">(</span><span class="s2">&quot;Expected 3D array with 3 channels in last dimension&quot;</span><span class="p">)</span>

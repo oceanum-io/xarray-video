@@ -53,7 +53,7 @@ class VideoArrayWrapper(BackendArray):
         return self._dtype
 
     @property
-    def shape(self) -> tuple[int, ...]:
+    def shape(self):
         return self._shape
 
     def _getitem(self, key):

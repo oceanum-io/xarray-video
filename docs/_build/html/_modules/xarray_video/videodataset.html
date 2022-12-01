@@ -172,21 +172,23 @@
 <div class="viewcode-block" id="VideoDataset"><a class="viewcode-back" href="../../xarray_video.html#xarray_video.VideoDataset">[docs]</a><span class="nd">@xarray</span><span class="o">.</span><span class="n">register_dataset_accessor</span><span class="p">(</span><span class="s2">&quot;video&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">VideoDataset</span><span class="p">(</span><span class="n">xarray</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Video extension for :class:`xarray.Dataset`.</span>
+
 <span class="sd">    Implements operations on a dataset which includes video data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="VideoDataset.to_zarr"><a class="viewcode-back" href="../../xarray_video.html#xarray_video.VideoDataset.to_zarr">[docs]</a>    <span class="k">def</span> <span class="nf">to_zarr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="p">(</span>
-            <span class="sd">&quot;&quot;&quot;Write to zarr using a video codec for the data variables.</span>
+            <span class="sd">&quot;&quot;&quot;Write to zarr using a video codec for comaptible data variables.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
             <span class="o">+</span> <span class="n">xarray</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">to_zarr</span><span class="o">.</span><span class="vm">__doc__</span>
         <span class="p">)</span>
         <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
-            <span class="bp">self</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="o">**</span><span class="bp">self</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">encoding</span><span class="p">,</span>
-                <span class="s2">&quot;compressor&quot;</span><span class="p">:</span> <span class="n">compressor</span><span class="p">,</span>
-                <span class="s2">&quot;chunks&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
-            <span class="p">}</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="o">**</span><span class="bp">self</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">encoding</span><span class="p">,</span>
+                    <span class="s2">&quot;compressor&quot;</span><span class="p">:</span> <span class="n">compressor</span><span class="p">,</span>
+                    <span class="s2">&quot;chunks&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+                <span class="p">}</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">to_zarr</span><span class="p">(</span>
             <span class="o">*</span><span class="n">args</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
