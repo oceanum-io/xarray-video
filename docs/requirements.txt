@@ -1,3 +1,2 @@
-oceanum
-autodoc-pydantic
+xarray_video
 pydata-sphinx-theme
