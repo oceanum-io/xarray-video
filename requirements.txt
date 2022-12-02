@@ -2,3 +2,4 @@ numcodecs
 xarray
 zarr
 av
+matplotlib

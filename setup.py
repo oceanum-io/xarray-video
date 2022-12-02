@@ -27,11 +27,7 @@ setup(
     author="Oceanum Developers",
     author_email="developers@oceanum.science",
     description="Xarray accessor and zarr codec for storing and accessing time and/or space stacked video",
-    entry_points={
-        "console_scripts": [
-            "oceanum=oceanum.cli:main",
-        ],
-    },
+    entry_points={},
     install_requires=requirements,
     license="MIT license",
     long_description=readme + "\n\n" + history,
