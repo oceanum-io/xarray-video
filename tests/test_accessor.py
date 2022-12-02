@@ -26,3 +26,13 @@ def test_video_to_zarr():
 
     test = xarray.open_dataset("/tmp/test.zarr")
     assert test["video"].encoding["compressor"].codec_id == "mp4"
+
+
+def test_dataarray_to_file():
+    vid = xarray_video.open_video(os.path.join(HERE, "data", "ocean_test.mp4"))
+    vid["video"].video.to_video("/tmp/dataarray.mp4")
+
+
+def test_dataset_to_file():
+    vid = xarray_video.open_video(os.path.join(HERE, "data", "ocean_test.mp4"))
+    vid.video.to_video("/tmp/dataset.mp4")

@@ -105,6 +105,31 @@ def _open_video(filename, mode):
     return av.open(filename, mode=mode)
 
 
+def _write_video(filename, array, fps=25, metadata={}):
+
+    writer = av.open(filename, mode="w", format="mp4")
+
+    nf, ny, nx, nb = array.shape
+
+    stream = writer.add_stream("h264", rate=fps)
+    stream.thread_type = "AUTO"
+
+    stream.width = nx
+    stream.height = ny
+    stream.pix_fmt = "yuv420p"
+
+    for frame_i in array:
+        frame = av.VideoFrame.from_ndarray(frame_i, format="rgb24")
+        for packet in stream.encode(frame):
+            writer.mux(packet)
+
+    # Flush stream
+    for packet in stream.encode():
+        writer.mux(packet)
+
+    writer.close()
+
+
 def open_video(filename, start_time=None, **kwargs):
     """Video file into an xarray dataset.
 

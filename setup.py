@@ -13,7 +13,7 @@ with open("HISTORY.rst") as history_file:
 
 import xarray_video
 
-requirements = ["xarray", "numcodecs", "av"]
+requirements = ["xarray", "numcodecs", "av", "matplotlib"]
 
 setup_requirements = [
     "pytest-runner",
