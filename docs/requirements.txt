@@ -1,3 +1,4 @@
 xarray_video
 pydata-sphinx-theme
+autodoc_pydantic
 matplotlib
