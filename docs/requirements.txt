@@ -1,2 +1,3 @@
 xarray_video
 pydata-sphinx-theme
+matplotlib
