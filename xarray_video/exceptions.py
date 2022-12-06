@@ -12,3 +12,7 @@ class VideoWriteError(VideoError):
 
 class VideoProcessingError(VideoError):
     pass
+
+
+class VideoDisplayError(VideoError):
+    pass

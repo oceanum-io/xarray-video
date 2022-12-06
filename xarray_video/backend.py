@@ -187,9 +187,10 @@ def open_video(filename, start_time=None, **kwargs):
             )
         },
     )
+
+    # Set the default zarr compressor and assign preferred chunk sizes
     dataset["video"].encoding = {
-        "chunks": [frames, height, width, 3],
-        "compressor": compressor,
+        "preferred_chunks": {"channel": 3, "pixel_y": height, "pixel_x": width},
     }
 
     # Make the file closeable

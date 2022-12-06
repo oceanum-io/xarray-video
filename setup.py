@@ -13,22 +13,12 @@ with open("HISTORY.rst") as history_file:
 
 import xarray_video
 
-requirements = ["xarray", "numcodecs", "av", "matplotlib"]
-
-setup_requirements = [
-    "pytest-runner",
-]
-
-test_requirements = [
-    "pytest",
-]
-
 setup(
     author="Oceanum Developers",
     author_email="developers@oceanum.science",
     description="Xarray accessor and zarr codec for storing and accessing time and/or space stacked video",
     entry_points={},
-    install_requires=requirements,
+    install_requires=["xarray", "numcodecs", "av"],
     license="MIT license",
     long_description=readme + "\n\n" + history,
     include_package_data=True,
@@ -36,10 +26,11 @@ setup(
     documentation="https://xarray-video.readthedocs.io",
     name="xarray-video",
     packages=find_packages(),
-    setup_requires=setup_requirements,
+    setup_requires=["pytest-runner"],
     test_suite="tests",
-    tests_require=test_requirements,
+    tests_require=["pytest"],
     url="https://github.com/oceanum/xarray-video",
     version=xarray_video.__version__,
     zip_safe=False,
+    extras_require={"plotting": ["matplotlib"]},
 )

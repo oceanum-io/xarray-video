@@ -4,28 +4,42 @@ import warnings
 from .exceptions import VideoWriteError
 from .backend import compressor, _write_video
 
+_DEFAULT_CHUNK_SIZE = 512000000
+
 
 @xarray.register_dataset_accessor("video")
-class VideoDataset(xarray.Dataset):
+class VideoDataset:
     """Video extension for :class:`xarray.Dataset`.
 
     Implements operations on a dataset which includes video data
     """
 
-    def to_zarr(self, *args, **kwargs):
+    def __init__(self, xarray_dset):
+        self._dset = xarray_dset
+
+    def to_zarr(self, *args, chunk_sizes={}, **kwargs):
         (
-            """Write to zarr using a video codec for comaptible data variables.
+            """Write to zarr using a video codec for compatible data variables.
+
+        Kwargs:
+            chunk_sizes (dict, *optional*): preferred chunk_sizes for frame, pixel_y and pixel_x dimensions
+
         """
             + xarray.core.dataset.Dataset.to_zarr.__doc__
         )
-        for v in self.data_vars:
-            if len(self.shape) == 4 and self.shape[3] == 3:
-                self[v].encoding = {
-                    **self[v].encoding,
+        for v in self._dset.data_vars:
+            dv = self._dset.data_vars[v]
+            if len(dv.shape) == 4 and dv.shape[3] == 3:
+                nf, ny, nx, nb = dv.shape
+                ny0 = chunk_sizes.get("pixel_y", ny)
+                nx0 = chunk_sizes.get("pixel_x", nx)
+                nf0 = chunk_sizes.get("frame", _DEFAULT_CHUNK_SIZE // ny0 // nx0 // 3)
+                dv.encoding = {
+                    **dv.encoding,
                     "compressor": compressor,
-                    "chunks": self[v].shape,
+                    "chunks": [nf0, ny0, nx0, 3],
                 }
-        super().to_zarr(
+        self._dset.to_zarr(
             *args,
             **kwargs,
         )
@@ -43,10 +57,10 @@ class VideoDataset(xarray.Dataset):
         """
         try:
             output_stream = None
-            for v in self.data_vars:
+            for v in self._dset.data_vars:
                 if data_var and v != data_var:
                     continue
-                video_array = self.data_vars[v]
+                video_array = self._dset.data_vars[v]
                 if (
                     len(video_array.shape) == 4
                     and video_array.shape[3] == 3
