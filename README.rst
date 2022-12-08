@@ -1,5 +1,7 @@
 
-Xarray backend and zarr codec for working with video data. 
+Xarray backend and zarr codec for working with video data.
+
+**This project is in an early state. Please be patient with any bugs. Any contributuons are welcome.**
 
 
 * MIT license
