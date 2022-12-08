@@ -51,21 +51,31 @@ def test_open_mkv(video_mkv):
     assert vid["video"].shape == video_mkv.shape
 
 
-def test_slice_time(video):
+def test_slice_frames(video):
     vid = xarray_video.open_video(os.path.join(HERE, "data", "ocean_test.mp4"))
     subset = vid["video"][210:300]
     assert len(subset) == 90
     numpy.testing.assert_array_equal(subset[0].values, video[210])
 
 
-def test_slice_time_mkv(video_mkv):
+def test_slice_frames_mkv(video_mkv):
     vid = xarray_video.open_video(os.path.join(HERE, "data", "ocean_test.mkv"))
     subset = vid["video"][210:300]
     assert len(subset) == 90
     numpy.testing.assert_array_equal(subset[0].values, video_mkv[210])
 
 
-def test_time_step(video):
+def test_select_time(video):
+    vid = xarray_video.open_video(
+        os.path.join(HERE, "data", "ocean_test.mkv"), start_time="2020-01-01 00:00:00"
+    )
+    subset = vid.sel(time=slice("2020-01-01 00:00:00", "2020-01-01 00:00:10"))
+    assert subset["time"].max() < numpy.datetime64("2020-01-01 00:00:11")
+    assert len(subset["video"] == 275)
+    numpy.testing.assert_array_equal(subset["video"][-1].values, video[274])
+
+
+def test_subset_frames(video):
     vid = xarray_video.open_video(os.path.join(HERE, "data", "ocean_test.mp4"))
     subset = vid["video"][::10]
     assert len(subset) == 98

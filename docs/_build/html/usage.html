@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Usage &#8212; xarray-video 0.0.1 documentation</title>
+    <title>Usage &#8212; xarray-video 0.2.0 documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
   document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
@@ -67,7 +67,7 @@
   
   
   
-    <p class="title logo__title">xarray-video 0.0.1 documentation</p>
+    <p class="title logo__title">xarray-video 0.2.0 documentation</p>
   
 </a>
     
@@ -169,8 +169,18 @@
 <nav id="bd-toc-nav">
     <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#work-with-video-data">
-   Work with Video data
+  <a class="reference internal nav-link" href="#open-a-video-file">
+   Open a video file
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#subset-a-video-dataset">
+   Subset a video dataset
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#write-back-to-a-file">
+   Write back to a file
   </a>
  </li>
 </ul>
@@ -194,13 +204,83 @@
                 
   <section id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">#</a></h1>
-<p>To use the xarray-video accessors:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xarray_video</span>
+<p>Import the library:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xarray_video</span> <span class="k">as</span> <span class="nn">xv</span>
 </pre></div>
 </div>
-<p>This will also automatically import and register the zarr codecs for video data</p>
-<section id="work-with-video-data">
-<h2>Work with Video data<a class="headerlink" href="#work-with-video-data" title="Permalink to this heading">#</a></h2>
+<p>This will also automatically import and register the video accessors and the zarr codecs for video data</p>
+<section id="open-a-video-file">
+<h2>Open a video file<a class="headerlink" href="#open-a-video-file" title="Permalink to this heading">#</a></h2>
+<p>If you don’t have file to test, grab one of the xarray-video test files:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="s2">&quot;https://github.com/oceanum-io/xarray-video/raw/main/tests/data/ocean_test.mp4&quot;</span><span class="p">,</span> <span class="s2">&quot;ocean_test.mp4&quot;</span><span class="p">)</span>
+
+<span class="n">v</span><span class="o">=</span><span class="n">xv</span><span class="o">.</span><span class="n">open_video</span><span class="p">(</span><span class="s2">&quot;ocean_test.mp4&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Create a time coordinate by defining the start time of the video:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">v</span><span class="o">=</span><span class="n">xv</span><span class="o">.</span><span class="n">open_video</span><span class="p">(</span><span class="s2">&quot;ocean_test.mp4&quot;</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="s2">&quot;2022-01-01 00:00:00&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Have look at the last frame of the video:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;video&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">video</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Play a preview:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;video&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">video</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If you have problems with the matplotlib graphics backend, try using ipython.
+In a notebook environment, you may have to do %matplotlib widget to get the play function to work correctly.</p>
+</section>
+<section id="subset-a-video-dataset">
+<h2>Subset a video dataset<a class="headerlink" href="#subset-a-video-dataset" title="Permalink to this heading">#</a></h2>
+<p>Subset the first 100 frames of the video:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">v_subset</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">frame</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>get only once every 25 frames:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">v_subset</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">frame</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="mi">25</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>or if you want to subset by a time coordinate:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">v_subset</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="s2">&quot;2022-01-01 00:00:00&quot;</span><span class="p">,</span> <span class="s2">&quot;2022-01-01 00:00:10&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Get a part of the video frame:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">v_subset</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">pixel_x</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">500</span><span class="p">))</span>
+<span class="n">v_subset</span><span class="p">[</span><span class="s2">&quot;video&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">video</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="write-back-to-a-file">
+<h2>Write back to a file<a class="headerlink" href="#write-back-to-a-file" title="Permalink to this heading">#</a></h2>
+<p>Write to video file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">v_subset</span><span class="o">.</span><span class="n">video</span><span class="o">.</span><span class="n">to_video</span><span class="p">(</span><span class="s2">&quot;onlyhalf.mp4&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Write to netcdf:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">v_subset</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="s2">&quot;my_video.nc&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Write to zarr using the video codec:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>v_subset.video.to_zarr(&quot;video_codec.zarr&quot;)
+!du -h video_codec.zarr
+</pre></div>
+</div>
+<p>Or use vanilla zarr, if you want to see how much bigger the default compressions is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>v_subset.to_zarr(&quot;video_blosc.zarr&quot;)
+!du -h video_blosc.zarr
+</pre></div>
+</div>
+<p>Open the zarr archive with video codec to check xarray can open it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="n">vz</span><span class="o">=</span><span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;video_codec.zarr&quot;</span><span class="p">)</span>
+<span class="n">vz</span><span class="p">[</span><span class="s2">&quot;video&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">video</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+</pre></div>
+</div>
 </section>
 </section>
 

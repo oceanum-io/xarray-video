@@ -229,6 +229,8 @@ def open_video(filename, start_time=None, **kwargs):
             )
         },
     )
+    if start_time:
+        dataset = dataset.set_xindex("time")
 
     # Set the default zarr compressor and assign preferred chunk sizes
     dataset["video"].encoding = {

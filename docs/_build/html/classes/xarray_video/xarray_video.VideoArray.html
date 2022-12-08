@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>xarray_video.VideoArray &#8212; xarray-video 0.0.1 documentation</title>
+    <title>xarray_video.VideoArray &#8212; xarray-video 0.2.0 documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
   document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
@@ -67,7 +67,7 @@
   
   
   
-    <p class="title logo__title">xarray-video 0.0.1 documentation</p>
+    <p class="title logo__title">xarray-video 0.2.0 documentation</p>
   
 </a>
     
@@ -204,10 +204,19 @@
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#xarray_video.VideoArray.item">
+    <a class="reference internal nav-link" href="#xarray_video.VideoArray.__init__">
      <code class="docutils literal notranslate">
       <span class="pre">
-       VideoArray.item()
+       VideoArray.__init__()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#xarray_video.VideoArray.play">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       VideoArray.play()
       </span>
      </code>
     </a>
@@ -222,10 +231,10 @@
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#xarray_video.VideoArray.searchsorted">
+    <a class="reference internal nav-link" href="#xarray_video.VideoArray.to_video">
      <code class="docutils literal notranslate">
       <span class="pre">
-       VideoArray.searchsorted()
+       VideoArray.to_video()
       </span>
      </code>
     </a>
@@ -255,77 +264,45 @@
 <h1>xarray_video.VideoArray<a class="headerlink" href="#xarray-video-videoarray" title="Permalink to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="xarray_video.VideoArray">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_video.</span></span><span class="sig-name descname"><span class="pre">VideoArray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">data:</span> <span class="pre">~typing.Any</span> <span class="pre">=</span> <span class="pre">&lt;NA&gt;,</span> <span class="pre">coords:</span> <span class="pre">~typing.Optional[~typing.Union[~typing.Sequence[~typing.Union[~typing.Sequence[~typing.Any],</span> <span class="pre">~pandas.core.indexes.base.Index,</span> <span class="pre">~xarray.core.dataarray.DataArray]],</span> <span class="pre">~typing.Mapping[~typing.Any,</span> <span class="pre">~typing.Any]]]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">dims:</span> <span class="pre">~typing.Optional[~typing.Union[~typing.Hashable,</span> <span class="pre">~typing.Sequence[~typing.Hashable]]]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">name:</span> <span class="pre">~typing.Optional[~typing.Hashable]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">attrs:</span> <span class="pre">~typing.Optional[~typing.Mapping]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">indexes:</span> <span class="pre">~typing.Optional[dict[typing.Hashable,</span> <span class="pre">xarray.core.indexes.Index]]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">fastpath:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/xarray_video/videoarray.html#VideoArray"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xarray_video.VideoArray" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_video.</span></span><span class="sig-name descname"><span class="pre">VideoArray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xarray_arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/xarray_video/videoarray.html#VideoArray"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xarray_video.VideoArray" title="Permalink to this definition">#</a></dt>
 <dd><p>Video extension for <code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.DataArray</span></code>.</p>
 <p>Implements operations on a dataset which includes video data</p>
-<p class="rubric">Attributes</p>
-<table class="autosummary longtable table autosummary">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-</tbody>
-</table>
 <p class="rubric">Methods</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="xarray_video.VideoArray.item">
-<span class="sig-name descname"><span class="pre">item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_video.VideoArray.item" title="Permalink to this definition">#</a></dt>
-<dd><p>Copy an element of an array to a standard Python scalar and return it.</p>
+<dt class="sig sig-object py" id="xarray_video.VideoArray.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xarray_arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/xarray_video/videoarray.html#VideoArray.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xarray_video.VideoArray.__init__" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xarray_video.VideoArray.play">
+<span class="sig-name descname"><span class="pre">play</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/xarray_video/videoarray.html#VideoArray.play"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xarray_video.VideoArray.play" title="Permalink to this definition">#</a></dt>
+<dd><p>Play DataArray as a video using matplotlib.animation.</p>
+<p>All the video data is loaded into buffered in memory before rendering. Large video sequences cannot be played with this function.
+Note that this function is unlikely to play the video at the correct frame rate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>*args</strong> (<em>Arguments</em><em> (</em><em>variable number and type</em><em>)</em>) – <ul class="simple">
-<li><p>none: in this case, the method only works for arrays
-with one element (<cite>a.size == 1</cite>), which element is
-copied into a standard Python scalar object and returned.</p></li>
-<li><p>int_type: this argument is interpreted as a flat index into
-the array, specifying which element to copy and return.</p></li>
-<li><p>tuple of int_types: functions as does a single int_type argument,
-except that the argument is interpreted as an nd-index into the
-array.</p></li>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_time</strong> (Union[datetime.datetime,str,:class:<cite>numpy.datetime64</cite>], “optional*) – Start time of video array</p></li>
+<li><p><strong>interval</strong> (int, <em>optional</em>) – Interval in milliseconds between each frame render (default 0)</p></li>
+<li><p><strong>repeat</strong> (bool, <em>optional</em>) – Repeat animation (default False)</p></li>
 </ul>
-</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>z</strong> – A copy of the specified element of the array as a suitable
-Python scalar</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Standard Python scalar object</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>When the data type of <cite>a</cite> is longdouble or clongdouble, item() returns
-a scalar array object because there is no available Python scalar that
-would not lose information. Void arrays return a buffer object for item(),
-unless fields are defined, in which case a tuple is returned.</p>
-<p><cite>item</cite> is very similar to a[args], except, instead of an array scalar,
-a standard Python scalar is returned. This can be useful for speeding up
-access to elements of the array and doing arithmetic on elements of the
-array using Python’s optimized math.</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
-<span class="go">array([[2, 2, 6],</span>
-<span class="go">       [1, 3, 6],</span>
-<span class="go">       [1, 0, 1]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-<span class="go">1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
-<span class="go">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-<span class="go">2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-<span class="go">1</span>
-</pre></div>
-</div>
+<dl class="simple">
+<dt>Kwargs:</dt><dd><p>kwargs are passed to matplotlib.pyplot.figure</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../xarray_video.html#xarray_video.exceptions.VideoError" title="xarray_video.exceptions.VideoError"><strong>VideoError</strong></a> – if DataArray does not represent an video or the video array is too large</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="xarray_video.VideoArray.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/xarray_video/videoarray.html#VideoArray.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xarray_video.VideoArray.plot" title="Permalink to this definition">#</a></dt>
-<dd><p>Plot DataArray as an image using matplotlib.imshow</p>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/xarray_video/videoarray.html#VideoArray.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xarray_video.VideoArray.plot" title="Permalink to this definition">#</a></dt>
+<dd><p>Plot DataArray frame as an image using matplotlib.imshow</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p><a class="reference internal" href="../../xarray_video.html#xarray_video.exceptions.VideoError" title="xarray_video.exceptions.VideoError"><strong>VideoError</strong></a> – if DataArray does not represent an image</p>
@@ -334,17 +311,17 @@ array using Python’s optimized math.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="xarray_video.VideoArray.searchsorted">
-<span class="sig-name descname"><span class="pre">searchsorted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'left'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sorter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xarray_video.VideoArray.searchsorted" title="Permalink to this definition">#</a></dt>
-<dd><p>Find indices where elements of v should be inserted in a to maintain order.</p>
-<p>For full documentation, see <cite>numpy.searchsorted</cite></p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.searchsorted</span></code></dt><dd><p>equivalent function</p>
+<dt class="sig sig-object py" id="xarray_video.VideoArray.to_video">
+<span class="sig-name descname"><span class="pre">to_video</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/xarray_video/videoarray.html#VideoArray.to_video"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xarray_video.VideoArray.to_video" title="Permalink to this definition">#</a></dt>
+<dd><p>Write DataArray to a video file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>string</em>) – name of output file</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="../../xarray_video.html#xarray_video.exceptions.VideoWriteError" title="xarray_video.exceptions.VideoWriteError"><strong>VideoWriteError</strong></a> – Incompatible DataArray or file write error</p>
 </dd>
 </dl>
-</div>
 </dd></dl>
 
 </dd></dl>

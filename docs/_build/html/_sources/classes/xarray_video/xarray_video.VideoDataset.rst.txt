@@ -7,17 +7,14 @@
 
    
    
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-   
    
 
    
    
    .. rubric:: Methods
    
+   .. automethod:: __init__
+   .. automethod:: to_video
    .. automethod:: to_zarr
    
    

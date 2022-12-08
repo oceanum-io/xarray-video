@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>xarray_video.backend &#8212; xarray-video 0.0.1 documentation</title>
+    <title>xarray_video.backend &#8212; xarray-video 0.2.0 documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
   document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
@@ -34,6 +34,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <link rel="author" title="About these documents" href="../../about.html" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -63,7 +64,7 @@
   
   
   
-    <p class="title logo__title">xarray-video 0.0.1 documentation</p>
+    <p class="title logo__title">xarray-video 0.2.0 documentation</p>
   
 </a>
     
@@ -170,6 +171,7 @@
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">numcodecs</span>
@@ -185,6 +187,9 @@
 <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">VideoReadError</span>
 
 <span class="n">VIDEO_LOCK</span> <span class="o">=</span> <span class="n">SerializableLock</span><span class="p">()</span>
+<span class="n">TEMPDIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s2">&quot;xarray_video&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">TEMPDIR</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">TEMPDIR</span><span class="p">)</span>
 
 <span class="n">compressor</span> <span class="o">=</span> <span class="n">numcodecs</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">get_codec</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;mp4&quot;</span><span class="p">))</span>
 
@@ -201,30 +206,34 @@
 <div class="viewcode-block" id="VideoArrayWrapper"><a class="viewcode-back" href="../../xarray_video.html#xarray_video.VideoArrayWrapper">[docs]</a><span class="k">class</span> <span class="nc">VideoArrayWrapper</span><span class="p">(</span><span class="n">BackendArray</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A wrapper around video dataset objects&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">,</span> <span class="n">lock</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manager</span><span class="p">,</span> <span class="n">lock</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="n">manager</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">lock</span>
 
         <span class="n">reader</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+        <span class="n">stream</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">video</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="n">codec</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">streams</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">codec_context</span>
-        <span class="n">frames</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">streams</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">frames</span>
-        <span class="n">width</span> <span class="o">=</span> <span class="n">codec</span><span class="o">.</span><span class="n">width</span>
-        <span class="n">height</span> <span class="o">=</span> <span class="n">codec</span><span class="o">.</span><span class="n">height</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span> <span class="o">=</span> <span class="n">shape</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s2">&quot;uint8&quot;</span><span class="p">)</span>
+
+        <span class="n">ts0</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="mi">100</span> <span class="o">*</span> <span class="n">av</span><span class="o">.</span><span class="n">time_base</span><span class="p">)</span> <span class="o">/</span> <span class="n">stream</span><span class="o">.</span><span class="n">average_rate</span><span class="p">)</span> <span class="o">+</span> <span class="n">stream</span><span class="o">.</span><span class="n">start_time</span>
+        <span class="n">reader</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">ts0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">reader</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">stream</span><span class="p">):</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">dts</span> <span class="o">-</span> <span class="n">stream</span><span class="o">.</span><span class="n">start_time</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_can_seek</span> <span class="o">=</span> <span class="n">dt</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="k">break</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span>
 
     <span class="k">def</span> <span class="nf">_getitem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;video datasets should always be 4D&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;video DataArrays should always be 4D&quot;</span>
 
         <span class="n">frame_key</span><span class="p">,</span> <span class="n">y_key</span><span class="p">,</span> <span class="n">x_key</span><span class="p">,</span> <span class="n">band_key</span> <span class="o">=</span> <span class="n">key</span>
 
@@ -240,22 +249,38 @@
             <span class="n">f0</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">f1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">fstep</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">nf</span> <span class="o">=</span> <span class="p">(</span><span class="n">f1</span> <span class="o">-</span> <span class="n">f0</span><span class="p">)</span> <span class="o">//</span> <span class="n">fstep</span>
+        <span class="n">nf</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">f0</span><span class="p">,</span> <span class="n">f1</span><span class="p">,</span> <span class="n">fstep</span><span class="p">))</span>
         <span class="n">ny</span> <span class="o">=</span> <span class="n">_key_length</span><span class="p">(</span><span class="n">y_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">nx</span> <span class="o">=</span> <span class="n">_key_length</span><span class="p">(</span><span class="n">x_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
         <span class="n">nb</span> <span class="o">=</span> <span class="n">_key_length</span><span class="p">(</span><span class="n">band_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nf</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">nb</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;uint8&quot;</span><span class="p">)</span>
         <span class="n">reader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
-        <span class="n">reader</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">f0</span><span class="p">)</span>
+        <span class="n">stream</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">video</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_can_seek</span><span class="p">:</span>
+            <span class="n">ts0</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">f0</span> <span class="o">*</span> <span class="n">av</span><span class="o">.</span><span class="n">time_base</span><span class="p">)</span> <span class="o">/</span> <span class="n">stream</span><span class="o">.</span><span class="n">average_rate</span><span class="p">)</span> <span class="o">+</span> <span class="n">stream</span><span class="o">.</span><span class="n">start_time</span>
+            <span class="n">reader</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">ts0</span><span class="p">)</span>
+            <span class="n">frame_start</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">frame_start</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">ind0</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reader</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">video</span><span class="o">=</span><span class="mi">0</span><span class="p">)):</span>
-            <span class="n">ind</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">index</span>
-            <span class="k">if</span> <span class="n">frame</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;</span> <span class="n">f0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">frame_start</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">dts</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">dts</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">dts</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="p">):</span>  <span class="c1"># Some packets at start have dts=None, same for fluxhing packets at end</span>
+                    <span class="k">if</span> <span class="n">packet</span><span class="o">.</span><span class="n">buffer_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">dts</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">dts</span> <span class="o">=</span> <span class="mf">1e10</span>
+                <span class="n">frame_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dts</span> <span class="o">*</span> <span class="n">stream</span><span class="o">.</span><span class="n">time_base</span> <span class="o">*</span> <span class="n">stream</span><span class="o">.</span><span class="n">rate</span><span class="p">)</span>
+            <span class="n">ind</span> <span class="o">=</span> <span class="n">frame_start</span> <span class="o">+</span> <span class="n">i</span>
+            <span class="k">if</span> <span class="n">ind</span> <span class="o">&lt;</span> <span class="n">f0</span><span class="p">:</span>
                 <span class="k">continue</span>
-            <span class="k">elif</span> <span class="n">frame</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="n">f1</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">ind</span> <span class="o">&gt;=</span> <span class="n">f1</span><span class="p">:</span>
                 <span class="k">break</span>
-            <span class="k">elif</span> <span class="n">frame</span><span class="o">.</span><span class="n">index</span> <span class="o">%</span> <span class="n">fstep</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">ind</span> <span class="o">%</span> <span class="n">fstep</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">data</span><span class="p">[</span><span class="n">ind0</span><span class="p">]</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">to_ndarray</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;rgb24&quot;</span><span class="p">)[</span><span class="n">y_key</span><span class="p">,</span> <span class="n">x_key</span><span class="p">,</span> <span class="n">band_key</span><span class="p">]</span>
                 <span class="n">ind0</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -270,6 +295,31 @@
 
 <span class="k">def</span> <span class="nf">_open_video</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">av</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_write_video</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{}):</span>
+
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;mp4&quot;</span><span class="p">)</span>
+
+    <span class="n">nf</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">nb</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="n">stream</span> <span class="o">=</span> <span class="n">writer</span><span class="o">.</span><span class="n">add_stream</span><span class="p">(</span><span class="s2">&quot;h264&quot;</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">fps</span><span class="p">)</span>
+    <span class="n">stream</span><span class="o">.</span><span class="n">thread_type</span> <span class="o">=</span> <span class="s2">&quot;AUTO&quot;</span>
+
+    <span class="n">stream</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">nx</span>
+    <span class="n">stream</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">ny</span>
+    <span class="n">stream</span><span class="o">.</span><span class="n">pix_fmt</span> <span class="o">=</span> <span class="s2">&quot;yuv420p&quot;</span>
+
+    <span class="k">for</span> <span class="n">frame_i</span> <span class="ow">in</span> <span class="n">array</span><span class="p">:</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">VideoFrame</span><span class="o">.</span><span class="n">from_ndarray</span><span class="p">(</span><span class="n">frame_i</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;rgb24&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">packet</span> <span class="ow">in</span> <span class="n">stream</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">mux</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
+
+    <span class="c1"># Flush stream</span>
+    <span class="k">for</span> <span class="n">packet</span> <span class="ow">in</span> <span class="n">stream</span><span class="o">.</span><span class="n">encode</span><span class="p">():</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">mux</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
+
+    <span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="open_video"><a class="viewcode-back" href="../../xarray_video.html#xarray_video.open_video">[docs]</a><span class="k">def</span> <span class="nf">open_video</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -297,10 +347,17 @@
         <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">reader</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+    <span class="n">stream</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">video</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">codec</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">codec_context</span>
+    <span class="n">frames</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">frames</span>
+    <span class="c1"># If the frame count is not in metadata, this is likely a matroska file. Then seeking will likely not work either</span>
+    <span class="c1"># Solution is to scan the file using to demux to count the frames</span>
+    <span class="k">if</span> <span class="n">frames</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">packet</span> <span class="ow">in</span> <span class="n">reader</span><span class="o">.</span><span class="n">demux</span><span class="p">(</span><span class="n">stream</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">packet</span><span class="o">.</span><span class="n">buffer_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">frames</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    <span class="n">codec</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">streams</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">codec_context</span>
-    <span class="n">frames</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">streams</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">frames</span>
-    <span class="n">fps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">reader</span><span class="o">.</span><span class="n">streams</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rate</span><span class="p">)</span>
+    <span class="n">fps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">average_rate</span><span class="p">)</span>
     <span class="n">width</span> <span class="o">=</span> <span class="n">codec</span><span class="o">.</span><span class="n">width</span>
     <span class="n">height</span> <span class="o">=</span> <span class="n">codec</span><span class="o">.</span><span class="n">height</span>
 
@@ -317,7 +374,18 @@
 
     <span class="c1"># Attributes</span>
     <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fps&quot;</span><span class="p">:</span> <span class="n">fps</span><span class="p">,</span> <span class="s2">&quot;_video&quot;</span><span class="p">:</span> <span class="n">codec</span><span class="o">.</span><span class="n">name</span><span class="p">}</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">indexing</span><span class="o">.</span><span class="n">LazilyIndexedArray</span><span class="p">(</span><span class="n">VideoArrayWrapper</span><span class="p">(</span><span class="n">manager</span><span class="p">,</span> <span class="n">VIDEO_LOCK</span><span class="p">))</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">indexing</span><span class="o">.</span><span class="n">LazilyIndexedArray</span><span class="p">(</span>
+        <span class="n">VideoArrayWrapper</span><span class="p">(</span>
+            <span class="n">manager</span><span class="p">,</span>
+            <span class="n">VIDEO_LOCK</span><span class="p">,</span>
+            <span class="p">(</span>
+                <span class="n">frames</span><span class="p">,</span>
+                <span class="n">height</span><span class="p">,</span>
+                <span class="n">width</span><span class="p">,</span>
+                <span class="mi">3</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
 
     <span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span>
         <span class="n">data_vars</span><span class="o">=</span><span class="p">{</span>
@@ -329,9 +397,12 @@
             <span class="p">)</span>
         <span class="p">},</span>
     <span class="p">)</span>
+    <span class="k">if</span> <span class="n">start_time</span><span class="p">:</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">set_xindex</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Set the default zarr compressor and assign preferred chunk sizes</span>
     <span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;video&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;chunks&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">frames</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
-        <span class="s2">&quot;compressor&quot;</span><span class="p">:</span> <span class="n">compressor</span><span class="p">,</span>
+        <span class="s2">&quot;preferred_chunks&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;channel&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;pixel_y&quot;</span><span class="p">:</span> <span class="n">height</span><span class="p">,</span> <span class="s2">&quot;pixel_x&quot;</span><span class="p">:</span> <span class="n">width</span><span class="p">},</span>
     <span class="p">}</span>
 
     <span class="c1"># Make the file closeable</span>
@@ -370,7 +441,7 @@
   
   <div class="footer-item">
     <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.1.1.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
 </p>
   </div>
   

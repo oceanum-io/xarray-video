@@ -7,19 +7,15 @@
 
    
    
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-   
    
 
    
    
    .. rubric:: Methods
    
-   .. automethod:: item
+   .. automethod:: __init__
+   .. automethod:: play
    .. automethod:: plot
-   .. automethod:: searchsorted
+   .. automethod:: to_video
    
    

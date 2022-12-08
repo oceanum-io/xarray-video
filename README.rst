@@ -1,11 +1,12 @@
 
 Xarray backend and zarr codec for working with video data.
 
-**This project is in an early state. Please be patient with any bugs. Any contributuons are welcome.**
+**This project is in an early stage of development. Please be patient with any bugs. Any contributuons are welcome.**
 
 
 * MIT license
 * Documentation: https://xarray-video.readthedocs.io.
+* Github: https://github.com/oceanum-io/xarray-video
 
 
 Features
@@ -26,6 +27,7 @@ Uses
 * Easily convert video and frames to other formats such as netcdf or geotiff
 * Store video in an efficient chunked format within zarr
 * Create massive lazy access video archives with zarr
+* Store multiple videos (for example stereo camera) in the same archive with a consistent time and/or spatial reference.
 
 
 Limitations
@@ -34,6 +36,8 @@ Limitations
 The library uses [PyAV](https://pyav.org) to read and write to/from video files. It will be limited to the same set of formats and codecs as your PyAV installation.
 
 Although video file access and zarr archive access is lazy, once video data is loaded it is in uncompressed uint8 darrays. Trying to do dataset.load on large video files will exhaust your RAM very quickly.
+
+The play preview is only intended as a diagnostic tool. It buffers the entire video as an array before display so cannot handle larger arrays. The play preview is also unlikely to play in realtime for larger videos.
 
 
 Credits
