@@ -14,7 +14,6 @@ HERE = os.path.dirname(__file__)
 
 @pytest.fixture
 def video():
-    """Connection fixture"""
     container = av.open(os.path.join(HERE, "data", "ocean_test.mp4"))
 
     codec = container.streams[0].codec_context
@@ -28,16 +27,42 @@ def video():
     return data
 
 
-def test_open_video(video):
+@pytest.fixture
+def video_mkv():
+    container = av.open(os.path.join(HERE, "data", "ocean_test.mkv"))
+
+    codec = container.streams[0].codec_context
+    width = codec.width
+    height = codec.height
+
+    data = []
+    for i, frame in enumerate(container.decode(video=0)):
+        data.append(frame.to_ndarray(format="rgb24"))
+    return numpy.array(data, dtype="uint8")
+
+
+def test_open_mp4(video):
     vid = xarray_video.open_video(os.path.join(HERE, "data", "ocean_test.mp4"))
     assert vid["video"].shape == video.shape
 
 
+def test_open_mkv(video_mkv):
+    vid = xarray_video.open_video(os.path.join(HERE, "data", "ocean_test.mkv"))
+    assert vid["video"].shape == video_mkv.shape
+
+
 def test_slice_time(video):
     vid = xarray_video.open_video(os.path.join(HERE, "data", "ocean_test.mp4"))
-    subset = vid["video"][10:100]
+    subset = vid["video"][210:300]
     assert len(subset) == 90
-    numpy.testing.assert_array_equal(subset[0].values, video[10])
+    numpy.testing.assert_array_equal(subset[0].values, video[210])
+
+
+def test_slice_time_mkv(video_mkv):
+    vid = xarray_video.open_video(os.path.join(HERE, "data", "ocean_test.mkv"))
+    subset = vid["video"][210:300]
+    assert len(subset) == 90
+    numpy.testing.assert_array_equal(subset[0].values, video_mkv[210])
 
 
 def test_time_step(video):

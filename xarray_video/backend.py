@@ -3,6 +3,7 @@
 
 import os
 import warnings
+import tempfile
 
 import numpy as np
 import numcodecs
@@ -18,6 +19,9 @@ from xarray.backends.locks import SerializableLock
 from .exceptions import VideoReadError
 
 VIDEO_LOCK = SerializableLock()
+TEMPDIR = os.path.join(tempfile.gettempdir(), "xarray_video")
+if not os.path.exists(TEMPDIR):
+    os.mkdir(TEMPDIR)
 
 compressor = numcodecs.registry.get_codec(dict(id="mp4"))
 
@@ -34,19 +38,23 @@ def _key_length(key, length):
 class VideoArrayWrapper(BackendArray):
     """A wrapper around video dataset objects"""
 
-    def __init__(self, manager, lock):
+    def __init__(self, manager, lock, shape):
         self.manager = manager
         self.lock = lock
 
         reader = manager.acquire()
+        stream = reader.streams.video[0]
 
-        codec = reader.streams[0].codec_context
-        frames = reader.streams[0].frames
-        width = codec.width
-        height = codec.height
-
-        self._shape = (frames, height, width, 3)
+        self._shape = shape
         self._dtype = np.dtype("uint8")
+
+        ts0 = int((100 * av.time_base) / stream.average_rate) + stream.start_time
+        reader.seek(ts0)
+        for frame in reader.decode(stream):
+            dt = frame.dts - stream.start_time
+            self._can_seek = dt > 0
+            break
+        manager.close()
 
     @property
     def dtype(self):
@@ -57,7 +65,7 @@ class VideoArrayWrapper(BackendArray):
         return self._shape
 
     def _getitem(self, key):
-        assert len(key) == 4, "video datasets should always be 4D"
+        assert len(key) == 4, "video DataArrays should always be 4D"
 
         frame_key, y_key, x_key, band_key = key
 
@@ -80,15 +88,31 @@ class VideoArrayWrapper(BackendArray):
 
         data = np.zeros((nf, ny, nx, nb), dtype="uint8")
         reader = self.manager.acquire()
-        reader.seek(f0)
+        stream = reader.streams.video[0]
+        if self._can_seek:
+            ts0 = int((f0 * av.time_base) / stream.average_rate) + stream.start_time
+            reader.seek(ts0)
+            frame_start = -1
+        else:
+            frame_start = 0
         ind0 = 0
         for i, frame in enumerate(reader.decode(video=0)):
-            ind = frame.index
-            if frame.index < f0:
+            if frame_start < 0:
+                dts = frame.dts
+                if (
+                    dts is None
+                ):  # Some packets at start have dts=None, same for fluxhing packets at end
+                    if packet.buffer_size > 0:
+                        dts = 0
+                    else:
+                        dts = 1e10
+                frame_start = int(dts * stream.time_base * stream.rate)
+            ind = frame_start + i
+            if ind < f0:
                 continue
-            elif frame.index >= f1:
+            elif ind >= f1:
                 break
-            elif frame.index % fstep == 0:
+            elif ind % fstep == 0:
                 data[ind0] = frame.to_ndarray(format="rgb24")[y_key, x_key, band_key]
                 ind0 += 1
         self.manager.close()
@@ -155,10 +179,17 @@ def open_video(filename, start_time=None, **kwargs):
         kwargs=kwargs,
     )
     reader = manager.acquire()
+    stream = reader.streams.video[0]
+    codec = stream.codec_context
+    frames = stream.frames
+    # If the frame count is not in metadata, this is likely a matroska file. Then seeking will likely not work either
+    # Solution is to scan the file using to demux to count the frames
+    if frames == 0:
+        for packet in reader.demux(stream):
+            if packet.buffer_size > 0:
+                frames += 1
 
-    codec = reader.streams[0].codec_context
-    frames = reader.streams[0].frames
-    fps = int(reader.streams[0].rate)
+    fps = int(stream.average_rate)
     width = codec.width
     height = codec.height
 
@@ -175,7 +206,18 @@ def open_video(filename, start_time=None, **kwargs):
 
     # Attributes
     attrs = {"fps": fps, "_video": codec.name}
-    data = indexing.LazilyIndexedArray(VideoArrayWrapper(manager, VIDEO_LOCK))
+    data = indexing.LazilyIndexedArray(
+        VideoArrayWrapper(
+            manager,
+            VIDEO_LOCK,
+            (
+                frames,
+                height,
+                width,
+                3,
+            ),
+        )
+    )
 
     dataset = Dataset(
         data_vars={

@@ -65,3 +65,25 @@ def test_append_zarr():
     img1 = test["video"][810].values
     similarity = ssim(img0, img1, channel_axis=2)
     assert similarity > 0.93
+
+
+def test_append_zarr_times():
+    vid1 = xarray_video.open_video(
+        os.path.join(HERE, "data", "ocean_test_1.mp4"),
+        start_time="2010-01-01T00:00:00Z",
+    )
+    vid2 = xarray_video.open_video(
+        os.path.join(HERE, "data", "ocean_test_2.mp4"),
+        start_time="2010-01-01T00:02:00Z",
+    )
+    vid3 = xarray_video.open_video(
+        os.path.join(HERE, "data", "ocean_test_3.mp4"),
+        start_time="2010-01-01T00:04:00Z",
+    )
+
+    vid1.video.to_zarr("/tmp/test.zarr", mode="w")
+    vid2.video.to_zarr("/tmp/test.zarr", mode="a", append_dim="frame")
+    vid3.video.to_zarr("/tmp/test.zarr", mode="a", append_dim="frame")
+
+    test = xarray.open_dataset("/tmp/test.zarr")
+    time = test["time"]
