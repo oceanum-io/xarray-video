@@ -25,7 +25,7 @@ setup(
     keywords="oceanum,video,xarray",
     documentation="https://xarray-video.readthedocs.io",
     name="xarray-video",
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests"]),
     setup_requires=["pytest-runner"],
     test_suite="tests",
     tests_require=["pytest"],
