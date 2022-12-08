@@ -19,7 +19,21 @@ def test_video_plot():
 
 def test_video_play():
     vid = xarray_video.open_video(os.path.join(HERE, "data", "ocean_test.mp4"))
-    vid["video"].video.play(figsize=(12, 10), start_time="2010-01-01")
+    vid["video"].video.play(figsize=(12, 10))
+
+
+def test_video_play_time():
+    vid = xarray_video.open_video(
+        os.path.join(HERE, "data", "ocean_test.mp4"), start_time="2010-01-01"
+    )
+    vid["video"].video.play(figsize=(12, 10), repeat=False)
+
+
+def test_video_play_partial():
+    vid = xarray_video.open_video(
+        os.path.join(HERE, "data", "ocean_test.mkv"), start_time="2010-01-01"
+    )
+    vid["video"][300::4].video.play(figsize=(12, 10), repeat=False)
 
 
 def test_dataset_to_file():

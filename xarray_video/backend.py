@@ -81,7 +81,7 @@ class VideoArrayWrapper(BackendArray):
             f0 = 0
             f1 = self._shape[0]
             fstep = 1
-        nf = (f1 - f0) // fstep
+        nf = len(range(f0, f1, fstep))
         ny = _key_length(y_key, self._shape[1])
         nx = _key_length(x_key, self._shape[2])
         nb = _key_length(band_key, self._shape[3])

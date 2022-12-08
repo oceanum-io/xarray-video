@@ -43,15 +43,16 @@ class VideoArray:
         plt.imshow(self._arr.values, **kwargs)
         plt.show()
 
-    def play(self, start_time=None, interval=0, **kwargs):
+    def play(self, interval=10, repeat=False, **kwargs):
         """Play DataArray as a video using matplotlib.animation.
 
         All the video data is loaded into buffered in memory before rendering. Large video sequences cannot be played with this function.
         Note that this function is unlikely to play the video at the correct frame rate.
 
         Args:
-            start_time (:class:`numpy.datetime64`, "optional*): Start time of video array
+            start_time (Union[datetime.datetime,str,:class:`numpy.datetime64`], "optional*): Start time of video array
             interval (int, *optional*): Interval in milliseconds between each frame render (default 0)
+            repeat (bool, *optional*): Repeat animation (default False)
 
         Kwargs:
             kwargs are passed to matplotlib.pyplot.figure
@@ -76,25 +77,26 @@ class VideoArray:
         fig = plt.figure(**kwargs)
         ax = fig.gca()
         im = ax.imshow(buffer[0], animated=True)
-        if start_time:
-            ax.set_title(f"Frame 1   {numpy.datetime64(start_time)}")
-        else:
-            ax.set_title(f"Frame 1   Time 0.00s")
+        frame_coords = []
+        for c in self._arr.coords:
+            if "frame" in self._arr.coords[c].dims:
+                frame_coords.append(self._arr.coords[c])
 
         def update_frame(i):
             frame = buffer[i]
             im.set_array(frame)
             ftime = i / fps
-            if start_time:
-                ax.set_title(
-                    f"Frame {i}  Time {numpy.datetime64(start_time) + numpy.timedelta64(int(1000*ftime),'ms')}"
-                )
-            else:
-                ax.set_title(f"Frame {i}  Time {ftime:.2f}s")
+            ax.set_title(
+                " ".join([c.name + ": " + str(c[i].values) for c in frame_coords])
+            )
             return (im,)
 
         ani = animation.FuncAnimation(
-            fig, update_frame, frames=range(len(self._arr)), interval=interval
+            fig,
+            update_frame,
+            frames=range(len(self._arr)),
+            interval=interval,
+            repeat=repeat,
         )
         plt.show()
 
