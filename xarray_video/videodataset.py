@@ -39,9 +39,10 @@ class VideoDataset:
                     "compressor": compressor,
                     "chunks": [nf0, ny0, nx0, 3],
                 }
+        if "mode" in kwargs and kwargs["mode"] == "w":
+            kwargs["encoding"] = {**kwargs.get("encoding", {}), **encoding}
         self._dset.to_zarr(
             *args,
-            encoding=encoding,
             **kwargs,
         )
 
