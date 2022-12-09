@@ -23,7 +23,7 @@ TEMPDIR = os.path.join(tempfile.gettempdir(), "xarray_video")
 if not os.path.exists(TEMPDIR):
     os.mkdir(TEMPDIR)
 
-compressor = numcodecs.registry.get_codec(dict(id="mp4"))
+compressor = numcodecs.registry.get_codec(dict(id="h264"))
 
 
 def _key_length(key, length):

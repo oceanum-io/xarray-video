@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>xarray_video.backend &#8212; xarray-video 0.2.0 documentation</title>
+    <title>xarray_video.backend &#8212; xarray-video 0.2.2 documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
   document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
@@ -64,7 +64,7 @@
   
   
   
-    <p class="title logo__title">xarray-video 0.2.0 documentation</p>
+    <p class="title logo__title">xarray-video 0.2.2 documentation</p>
   
 </a>
     
@@ -191,7 +191,7 @@
 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">TEMPDIR</span><span class="p">):</span>
     <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">TEMPDIR</span><span class="p">)</span>
 
-<span class="n">compressor</span> <span class="o">=</span> <span class="n">numcodecs</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">get_codec</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;mp4&quot;</span><span class="p">))</span>
+<span class="n">compressor</span> <span class="o">=</span> <span class="n">numcodecs</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">get_codec</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;h264&quot;</span><span class="p">))</span>
 
 
 <span class="k">def</span> <span class="nf">_key_length</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>

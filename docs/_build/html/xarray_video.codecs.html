@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>xarray_video.codecs package &#8212; xarray-video 0.2.0 documentation</title>
+    <title>xarray_video.codecs package &#8212; xarray-video 0.2.2 documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
   document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
@@ -65,7 +65,7 @@
   
   
   
-    <p class="title logo__title">xarray-video 0.2.0 documentation</p>
+    <p class="title logo__title">xarray-video 0.2.2 documentation</p>
   
 </a>
     
@@ -179,49 +179,9 @@
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#module-xarray_video.codecs.mp4">
+  <a class="reference internal nav-link" href="#xarray-video-codecs-mp4-module">
    xarray_video.codecs.mp4 module
   </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#xarray_video.codecs.mp4.MP4">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       MP4
-      </span>
-     </code>
-    </a>
-    <ul class="nav section-nav flex-column">
-     <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#xarray_video.codecs.mp4.MP4.codec_id">
-       <code class="docutils literal notranslate">
-        <span class="pre">
-         MP4.codec_id
-        </span>
-       </code>
-      </a>
-     </li>
-     <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#xarray_video.codecs.mp4.MP4.decode">
-       <code class="docutils literal notranslate">
-        <span class="pre">
-         MP4.decode()
-        </span>
-       </code>
-      </a>
-     </li>
-     <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#xarray_video.codecs.mp4.MP4.encode">
-       <code class="docutils literal notranslate">
-        <span class="pre">
-         MP4.encode()
-        </span>
-       </code>
-      </a>
-     </li>
-    </ul>
-   </li>
-  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#module-xarray_video.codecs">
@@ -252,68 +212,8 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">#</a></h2>
 </section>
-<section id="module-xarray_video.codecs.mp4">
-<span id="xarray-video-codecs-mp4-module"></span><h2>xarray_video.codecs.mp4 module<a class="headerlink" href="#module-xarray_video.codecs.mp4" title="Permalink to this heading">#</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="xarray_video.codecs.mp4.MP4">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xarray_video.codecs.mp4.</span></span><span class="sig-name descname"><span class="pre">MP4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xarray_video/codecs/mp4.html#MP4"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xarray_video.codecs.mp4.MP4" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Codec</span></code></p>
-<p>Codec providing compression using mp4 via pyav</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>fps</strong> (<em>int</em><em> (</em><em>optional</em><em>)</em>) – Frames per second in compressed chunk (default 25)</p>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="xarray_video.codecs.mp4.MP4.codec_id">
-<span class="sig-name descname"><span class="pre">codec_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mp4'</span></em><a class="headerlink" href="#xarray_video.codecs.mp4.MP4.codec_id" title="Permalink to this definition">#</a></dt>
-<dd><p>Codec identifier.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="xarray_video.codecs.mp4.MP4.decode">
-<span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xarray_video/codecs/mp4.html#MP4.decode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xarray_video.codecs.mp4.MP4.decode" title="Permalink to this definition">#</a></dt>
-<dd><p>Decode data in <cite>buf</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>buf</strong> (<em>buffer-like</em>) – Encoded data. May be any object supporting the new-style buffer
-protocol.</p></li>
-<li><p><strong>out</strong> (<em>buffer-like</em><em>, </em><em>optional</em>) – Writeable buffer to store decoded data. N.B. if provided, this buffer must
-be exactly the right size to store the decoded data.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>dec</strong> – Decoded data. May be any object supporting the new-style
-buffer protocol.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>buffer-like</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="xarray_video.codecs.mp4.MP4.encode">
-<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/xarray_video/codecs/mp4.html#MP4.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xarray_video.codecs.mp4.MP4.encode" title="Permalink to this definition">#</a></dt>
-<dd><p>Encode data in <cite>buf</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>buf</strong> (<em>buffer-like</em>) – Data to be encoded. May be any object supporting the new-style
-buffer protocol.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>enc</strong> – Encoded data. May be any object supporting the new-style buffer
-protocol.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>buffer-like</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+<section id="xarray-video-codecs-mp4-module">
+<h2>xarray_video.codecs.mp4 module<a class="headerlink" href="#xarray-video-codecs-mp4-module" title="Permalink to this heading">#</a></h2>
 </section>
 <section id="module-xarray_video.codecs">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-xarray_video.codecs" title="Permalink to this heading">#</a></h2>

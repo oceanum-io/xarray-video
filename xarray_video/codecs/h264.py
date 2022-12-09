@@ -9,8 +9,8 @@ from numcodecs.compat import ndarray_copy, ensure_contiguous_ndarray
 import av
 
 
-class MP4(Codec):
-    """Codec providing compression using mp4 via pyav
+class H264(Codec):
+    """Codec providing compression using h264 via pyav
 
     Parameters
     ----------
@@ -18,7 +18,7 @@ class MP4(Codec):
         Frames per second in compressed chunk (default 25)
     """
 
-    codec_id = "mp4"
+    codec_id = "h264"
 
     def __init__(self, fps=25):
         self.fps = fps

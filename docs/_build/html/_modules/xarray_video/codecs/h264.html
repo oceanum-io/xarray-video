@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>xarray_video.codecs.mp4 &#8212; xarray-video 0.2.0 documentation</title>
+    <title>xarray_video.codecs.h264 &#8212; xarray-video 0.2.2 documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
   document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
@@ -64,7 +64,7 @@
   
   
   
-    <p class="title logo__title">xarray-video 0.2.0 documentation</p>
+    <p class="title logo__title">xarray-video 0.2.2 documentation</p>
   
 </a>
     
@@ -165,7 +165,7 @@
               
               <article class="bd-article" role="main">
                 
-  <h1>Source code for xarray_video.codecs.mp4</h1><div class="highlight"><pre>
+  <h1>Source code for xarray_video.codecs.h264</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
@@ -177,8 +177,8 @@
 <span class="kn">import</span> <span class="nn">av</span>
 
 
-<div class="viewcode-block" id="MP4"><a class="viewcode-back" href="../../../xarray_video.codecs.html#xarray_video.MP4">[docs]</a><span class="k">class</span> <span class="nc">MP4</span><span class="p">(</span><span class="n">Codec</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Codec providing compression using mp4 via pyav</span>
+<div class="viewcode-block" id="H264"><a class="viewcode-back" href="../../../classes/xarray_video/xarray_video.H264.html#xarray_video.H264">[docs]</a><span class="k">class</span> <span class="nc">H264</span><span class="p">(</span><span class="n">Codec</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Codec providing compression using h264 via pyav</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -186,12 +186,12 @@
 <span class="sd">        Frames per second in compressed chunk (default 25)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">codec_id</span> <span class="o">=</span> <span class="s2">&quot;mp4&quot;</span>
+    <span class="n">codec_id</span> <span class="o">=</span> <span class="s2">&quot;h264&quot;</span>
 
-<div class="viewcode-block" id="MP4.__init__"><a class="viewcode-back" href="../../../classes/xarray_video/xarray_video.MP4.html#xarray_video.MP4.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">25</span><span class="p">):</span>
+<div class="viewcode-block" id="H264.__init__"><a class="viewcode-back" href="../../../classes/xarray_video/xarray_video.H264.html#xarray_video.H264.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">25</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fps</span> <span class="o">=</span> <span class="n">fps</span></div>
 
-<div class="viewcode-block" id="MP4.encode"><a class="viewcode-back" href="../../../xarray_video.codecs.html#xarray_video.MP4.encode">[docs]</a>    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buf</span><span class="p">):</span>
+<div class="viewcode-block" id="H264.encode"><a class="viewcode-back" href="../../../classes/xarray_video/xarray_video.H264.html#xarray_video.H264.encode">[docs]</a>    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buf</span><span class="p">):</span>
 
         <span class="c1"># normalise input</span>
         <span class="n">nf</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">nb</span> <span class="o">=</span> <span class="n">buf</span><span class="o">.</span><span class="n">shape</span>
@@ -220,7 +220,7 @@
         <span class="n">data</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">read</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="MP4.decode"><a class="viewcode-back" href="../../../xarray_video.codecs.html#xarray_video.MP4.decode">[docs]</a>    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="H264.decode"><a class="viewcode-back" href="../../../classes/xarray_video/xarray_video.H264.html#xarray_video.H264.decode">[docs]</a>    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># normalise inputs</span>
         <span class="n">buf</span> <span class="o">=</span> <span class="n">ensure_contiguous_ndarray</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
 

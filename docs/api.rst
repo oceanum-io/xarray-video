@@ -29,5 +29,5 @@ Zarr codecs
 .. autosummary::
    :toctree: classes/xarray_video
 
-    MP4
+    H264
 

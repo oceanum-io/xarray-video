@@ -1,9 +1,9 @@
-﻿xarray\_video.MP4
-=================
+﻿xarray\_video.H264
+==================
 
 .. currentmodule:: xarray_video
 
-.. autoclass:: MP4
+.. autoclass:: H264
 
    
    
@@ -11,7 +11,7 @@
 
    .. autosummary::
    
-      ~MP4.codec_id
+      ~H264.codec_id
    
    
 

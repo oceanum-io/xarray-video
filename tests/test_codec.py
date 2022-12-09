@@ -11,7 +11,7 @@ import xarray_video
 
 HERE = os.path.dirname(__file__)
 
-compressor = numcodecs.registry.get_codec(dict(id="mp4"))
+compressor = numcodecs.registry.get_codec(dict(id="h264"))
 
 
 @pytest.fixture

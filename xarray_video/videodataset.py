@@ -27,6 +27,7 @@ class VideoDataset:
         """
             + xarray.core.dataset.Dataset.to_zarr.__doc__
         )
+        encoding = {}
         for v in self._dset.data_vars:
             dv = self._dset.data_vars[v]
             if len(dv.shape) == 4 and dv.shape[3] == 3:
@@ -34,13 +35,13 @@ class VideoDataset:
                 ny0 = chunk_sizes.get("pixel_y", ny)
                 nx0 = chunk_sizes.get("pixel_x", nx)
                 nf0 = chunk_sizes.get("frame", _DEFAULT_CHUNK_SIZE // ny0 // nx0 // 3)
-                dv.encoding = {
-                    **dv.encoding,
+                encoding[v] = {
                     "compressor": compressor,
                     "chunks": [nf0, ny0, nx0, 3],
                 }
         self._dset.to_zarr(
             *args,
+            encoding=encoding,
             **kwargs,
         )
 

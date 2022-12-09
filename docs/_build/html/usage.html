@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Usage &#8212; xarray-video 0.2.0 documentation</title>
+    <title>Usage &#8212; xarray-video 0.2.2 documentation</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
   document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
@@ -67,7 +67,7 @@
   
   
   
-    <p class="title logo__title">xarray-video 0.2.0 documentation</p>
+    <p class="title logo__title">xarray-video 0.2.2 documentation</p>
   
 </a>
     
@@ -183,6 +183,11 @@
    Write back to a file
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#test-compression-performance">
+   Test compression performance
+  </a>
+ </li>
 </ul>
 
 </nav>
@@ -265,22 +270,58 @@ In a notebook environment, you may have to do %matplotlib widget to get the play
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">v_subset</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="s2">&quot;my_video.nc&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Write to zarr using the video codec:</p>
+<p>Write to zarr using the video codec (note the <em>video</em> accessor):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>v_subset.video.to_zarr(&quot;video_codec.zarr&quot;)
 !du -h video_codec.zarr
 </pre></div>
 </div>
-<p>Or use vanilla zarr, if you want to see how much bigger the default compressions is:</p>
+<p>Or use vanilla zarr, if you want:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>v_subset.to_zarr(&quot;video_blosc.zarr&quot;)
 !du -h video_blosc.zarr
 </pre></div>
 </div>
 <p>Open the zarr archive with video codec to check xarray can open it:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
-<span class="n">vz</span><span class="o">=</span><span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;video_codec.zarr&quot;</span><span class="p">)</span>
+<span class="n">vz</span><span class="o">=</span><span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s2">&quot;video_h264.zarr&quot;</span><span class="p">)</span>
 <span class="n">vz</span><span class="p">[</span><span class="s2">&quot;video&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">video</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
 </pre></div>
 </div>
+</section>
+<section id="test-compression-performance">
+<h2>Test compression performance<a class="headerlink" href="#test-compression-performance" title="Permalink to this heading">#</a></h2>
+<p>Write the complete dataset to zarr using vanilla blosc and the video codec:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">t0</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">v</span><span class="o">.</span><span class="n">to_zarr</span><span class="p">(</span><span class="s2">&quot;test_blosc.zarr&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="n">t1</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">t_blosc</span><span class="o">=</span><span class="n">t1</span><span class="o">-</span><span class="n">t0</span>
+
+<span class="n">t0</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">v</span><span class="o">.</span><span class="n">video</span><span class="o">.</span><span class="n">to_zarr</span><span class="p">(</span><span class="s2">&quot;test_h264.zarr&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="n">t1</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">t_h264</span><span class="o">=</span><span class="n">t1</span><span class="o">-</span><span class="n">t0</span>
+</pre></div>
+</div>
+<p>Get sizes of the zarr archives:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">h264_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;video_h264.zarr&#39;</span><span class="p">)</span>
+<span class="n">h264_size</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">h264_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;**/*&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">())</span>
+<span class="n">blosc_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;video_blosc.zarr&#39;</span><span class="p">)</span>
+<span class="n">blosc_size</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">blosc_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;**/*&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">())</span>
+
+<span class="n">compression_ratio</span><span class="o">=</span><span class="p">(</span><span class="n">blosc_size</span><span class="o">/</span><span class="n">h264_size</span><span class="p">)</span>
+
+<span class="n">time_ratio</span><span class="o">=</span><span class="p">(</span><span class="n">t_blosc</span><span class="o">/</span><span class="n">t_h264</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can see that for video data the video codec compression is more than 300x better than blosc. But it is also about a factor of 2 slower.</p>
+<p>Just for fun ;), calculate the <a class="reference external" href="https://en.wikipedia.org/wiki/Weissman_score">Weissman score</a> for the complete video:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">weissman</span><span class="o">=</span><span class="n">compression_ratio</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">t_blosc</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">t_264</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Weissman score of almost 250!!! Richard Hendricks would be pretty happy with that.</p>
 </section>
 </section>
 
