@@ -37,7 +37,7 @@ class H264(Codec):
 
         stream.width = nx
         stream.height = ny
-        stream.pix_fmt = "yuv420p"
+        stream.pix_fmt = "yuvj420p"
 
         for frame_i in buf:
             frame = av.VideoFrame.from_ndarray(frame_i, format="rgb24")

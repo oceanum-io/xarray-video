@@ -140,7 +140,7 @@ def _write_video(filename, array, fps=25, metadata={}):
 
     stream.width = nx
     stream.height = ny
-    stream.pix_fmt = "yuv420p"
+    stream.pix_fmt = "yuvj420p"
 
     for frame_i in array:
         frame = av.VideoFrame.from_ndarray(frame_i, format="rgb24")

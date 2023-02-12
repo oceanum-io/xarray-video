@@ -19,7 +19,7 @@ class VideoDataset:
 
     def to_zarr(self, *args, chunk_sizes={}, **kwargs):
         (
-            """Write to zarr using a video codec for compatible data variables.
+            """Write to zarr using a video codec for compatible data variables. For non compatible variables, zarr defaults (or variable encoding) will be used.
 
         Kwargs:
             chunk_sizes (dict, *optional*): preferred chunk_sizes for frame, pixel_y and pixel_x dimensions
@@ -30,7 +30,7 @@ class VideoDataset:
         encoding = {}
         for v in self._dset.data_vars:
             dv = self._dset.data_vars[v]
-            if len(dv.shape) == 4 and dv.shape[3] == 3:
+            if len(dv.shape) == 4 and dv.shape[3] == 3 and "_video" in dv.attrs:
                 nf, ny, nx, nb = dv.shape
                 ny0 = chunk_sizes.get("pixel_y", ny)
                 nx0 = chunk_sizes.get("pixel_x", nx)

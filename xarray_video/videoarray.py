@@ -1,7 +1,6 @@
 import xarray
 import numpy
 import av
-import matplotlib.pyplot as plt
 
 from .exceptions import VideoDisplayError, VideoWriteError
 from .backend import _write_video

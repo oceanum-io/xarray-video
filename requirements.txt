@@ -1,5 +1,5 @@
 numcodecs
 xarray
 zarr
-av
+av==9.2.0
 matplotlib

@@ -92,7 +92,7 @@ todo_include_todos = False
 # a list of builtin themes.
 #
 html_theme = "pydata_sphinx_theme"
-html_favicon = "favicon.ico"
+html_favicon = "oceanum.ico"
 # html_logo = "banner_dark.svg"
 
 # Theme options are theme-specific and customize the look and feel of a

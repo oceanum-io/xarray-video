@@ -14,20 +14,20 @@ Features
 
 * Xarray backend to read video into an xarray dataset
 * Xarray accessor for time and/or space stacked video DataArrays
-* Zarr video codec for efficient compression of video in zarr chunks. Up to 100x improvement over blosc for video data.
+* Zarr video codec for efficient compression of video. Up to 100x improvement over blosc for video data.
 * Xarray accessor for video Datasets for writing to zarr using the video codec
-* Simple plotting and play previews to view video
+* Simple diagnostic plotting and play functions to view video
 
 
 Uses
 ----
 
 * Attach coordinates (for example time or location) to the video frames dimension
-* Load video into DaraArrays for easy subsetting
-* Easily convert video and frames to other formats such as netcdf or geotiff
+* Utilise Xarray selection functionality for easy subsetting of video
+* Easily convert video streams and frames to other formats such as netcdf or geotiff
 * Store video in an efficient chunked format within zarr
-* Create massive lazy access video archives with zarr
-* Store multiple videos (for example stereo camera) in the same archive with a consistent time and/or spatial reference.
+* Create massive lazy access video archives using a zarr backend
+* Store multiple videos (for example stereo camera) in the same Dataset with consistent time and/or spatial coordinates.
 
 
 Limitations
