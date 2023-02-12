@@ -13,4 +13,4 @@ from .backend import open_video
 
 __author__ = """Oceanum Developers"""
 __email__ = "developers@oceanum.science"
-__version__ = "0.2.5"
+__version__ = "0.2.6"
