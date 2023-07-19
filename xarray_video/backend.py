@@ -24,7 +24,7 @@ if not os.path.exists(TEMPDIR):
     os.mkdir(TEMPDIR)
 
 compressor = numcodecs.registry.get_codec(dict(id="h264"))
-
+lossless_compressor = numcodecs.registry.get_codec(dict(id="h264", crf=0))
 
 def _key_length(key, length):
     if isinstance(key, slice):

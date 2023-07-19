@@ -2,7 +2,7 @@ import xarray
 import warnings
 
 from .exceptions import VideoWriteError
-from .backend import compressor, _write_video
+from .backend import compressor, lossless_compressor, _write_video
 
 _DEFAULT_CHUNK_SIZE = 512000000
 
@@ -17,13 +17,13 @@ class VideoDataset:
     def __init__(self, xarray_dset):
         self._dset = xarray_dset
 
-    def to_zarr(self, *args, chunk_sizes={}, **kwargs):
+    def to_zarr(self, *args, chunk_sizes={}, lossless=False, **kwargs):
         (
             """Write to zarr using a video codec for compatible data variables. For non compatible variables, zarr defaults (or variable encoding) will be used.
 
         Kwargs:
             chunk_sizes (dict, *optional*): preferred chunk_sizes for frame, pixel_y and pixel_x dimensions
-
+            lossless (boolean, *optional*): whether to use a lossless video codec
         """
             + xarray.core.dataset.Dataset.to_zarr.__doc__
         )
@@ -36,7 +36,7 @@ class VideoDataset:
                 nx0 = chunk_sizes.get("pixel_x", nx)
                 nf0 = chunk_sizes.get("frame", _DEFAULT_CHUNK_SIZE // ny0 // nx0 // 3)
                 encoding[v] = {
-                    "compressor": compressor,
+                    "compressor": lossless_compressor if lossless else compressor,
                     "chunks": [nf0, ny0, nx0, 3],
                 }
         if "mode" in kwargs and kwargs["mode"] == "w":

@@ -16,12 +16,17 @@ class H264(Codec):
     ----------
     fps : int (optional)
         Frames per second in compressed chunk (default 25)
+    crf : int (optional)
+        Constant Rate Factor (default None). The range of the CRF
+        scale is 0–51, where 0 is lossless, and 51 is worst quality
+        possible. If None will use the ffmepg defautt (23).
     """
 
     codec_id = "h264"
 
-    def __init__(self, fps=25):
+    def __init__(self, fps=25, crf=None):
         self.fps = fps
+        self.crf = crf
 
     def encode(self, buf):
 
@@ -37,7 +42,8 @@ class H264(Codec):
 
         stream.width = nx
         stream.height = ny
-        stream.pix_fmt = "yuvj420p"
+        stream.pix_fmt = "yuv420p"
+        stream.options = {} if self.crf is None else {"crf": str(self.crf)}
 
         for frame_i in buf:
             frame = av.VideoFrame.from_ndarray(frame_i, format="rgb24")
