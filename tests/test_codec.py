@@ -12,7 +12,7 @@ import xarray_video
 HERE = os.path.dirname(__file__)
 
 compressor = numcodecs.registry.get_codec(dict(id="h264"))
-
+lossless_compressor = numcodecs.registry.get_codec(dict(id="h264", crf=0))
 
 @pytest.fixture
 def video():
@@ -47,3 +47,22 @@ def test_zarr_write(video):
     # Compressed version not identical because using a different codec
     similarity = ssim(video[10], test[10], channel_axis=2)
     assert similarity > 0.94
+
+
+def test_zarr_lossless_write(video):
+    nf, ny, nx, nb = video.shape
+    z1 = zarr.open(
+        "/tmp/test.zarr",
+        mode="w",
+        shape=(nf, ny, nx, nb),
+        chunks=(nf, ny, nx, nb),
+        dtype="uint8",
+        compressor=lossless_compressor,
+    )
+    z1[:] = video
+    z2 = zarr.open("/tmp/test.zarr", mode="r")
+    test = z2[:]
+    numpy.testing.assert_array_equal(z1[10], test[10])
+    # Compressed version not identical because using a different codec                                                                                                                                                            
+    similarity = ssim(video[10], test[10], channel_axis=2)
+    assert similarity > 0.99
