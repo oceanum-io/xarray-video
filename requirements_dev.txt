@@ -11,3 +11,5 @@ pytest
 pytest-env
 pytest-runner
 scikit-image
+
+matplotlib
