@@ -21,10 +21,11 @@ from .exceptions import VideoReadError
 VIDEO_LOCK = SerializableLock()
 TEMPDIR = os.path.join(tempfile.gettempdir(), "xarray_video")
 if not os.path.exists(TEMPDIR):
-    os.mkdir(TEMPDIR)
+    os.makedirs(TEMPDIR, exist_ok=True)
 
 compressor = numcodecs.registry.get_codec(dict(id="h264"))
 lossless_compressor = numcodecs.registry.get_codec(dict(id="h264", crf=0))
+
 
 def _key_length(key, length):
     if isinstance(key, slice):
