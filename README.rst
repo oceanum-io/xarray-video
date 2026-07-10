@@ -5,8 +5,8 @@ Xarray extension for working with video data.
 
 
 * MIT license
-* Documentation: https://xarray-video.readthedocs.io.
-* Github: https://github.com/oceanum-io/xarray-video
+* Documentation: https://oceanum.github.io/xarray-video/
+* Github: https://github.com/oceanum/xarray-video
 
 
 Features

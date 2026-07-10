@@ -23,7 +23,7 @@ setup(
     long_description=readme + "\n\n" + history,
     include_package_data=True,
     keywords="oceanum,video,xarray",
-    documentation="https://xarray-video.readthedocs.io",
+    project_urls={"Documentation": "https://oceanum.github.io/xarray-video/"},
     name="xarray-video",
     packages=find_packages(exclude=["tests", "docs"]),
     setup_requires=["pytest-runner"],
